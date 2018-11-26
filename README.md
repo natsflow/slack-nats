@@ -136,7 +136,7 @@ output:
 
 Subscribe to this to receive all messages from all channels where the slacks-nats user has joined. Uses the slack [RTM](https://api.slack.com/rtm) api 
 and listens for [message events](https://api.slack.com/events/message).
-For the exact response see [message.go](pkg/event/event.go).
+For the exact response see [event.go](pkg/event/event.go).
     
 e.g. (node)
 
