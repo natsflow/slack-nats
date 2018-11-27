@@ -47,7 +47,7 @@ Provide channel id OR name.
     
 e.g. (node)
 
-```
+```javascript
 nats.requestOne('slack.channel.join', {name: 'my-slack-channel'}, {}, 3000, resp => {
     console.log(resp)
 })
@@ -98,7 +98,7 @@ For the exact requests & responses see [channel.go](pkg/channel/channel.go).
     
 e.g. (node)
 
-```
+```javascript
 nats.requestOne('slack.channel.leave', {id: 'CDNPXK2KT'}, {}, 3000, resp => {
     console.log(resp)
 })
@@ -118,7 +118,7 @@ For the exact requests & responses see [chat.go](pkg/chat/chat.go).
     
 e.g. (node)
 
-```
+```javascript
 nats.requestOne('slack.chat.postMessage', { text: 'Hello there', channel: 'CDNPXK2KT' }, {}, 3000, resp => {
     console.log(resp)
 })
@@ -144,7 +144,7 @@ Subscribe to this to receive all messages from all channels where the slacks-nat
     
 e.g. (node)
 
-```
+```javascript
 nats.subscribe('slack.event.message', resp => {
     console.log(resp)
 })
