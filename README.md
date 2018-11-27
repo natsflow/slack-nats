@@ -133,7 +133,7 @@ output:
 ### Publish-Subscribe 
 
 You can subscribe to events published over the [Slack RTM api](https://api.slack.com/rtm).
-Events will be published to the NATS subject `slack.event.<event_name>` where `event_name` matches the name published [here](https://api.slack.com/events)
+Events will be published to the NATS subject `slack.event.<event_name>` where `event_name` matches the name published [here](https://api.slack.com/events).
 For example all messages sent in channels where the slacks-nats user has joined will be published to `slack.event.message`.
 
 The following slack events are currently published to nats: 
