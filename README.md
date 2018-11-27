@@ -1,11 +1,11 @@
 # Slack Nats
 
-Interact with slack over nats
+Interact with slack over NATS
 
 
 ## Quick start
 
-Run nats:
+Run NATS:
 
 ```
 docker run -p 4222:4222 -p 8222:8222 -p 6222:6222 --name gnatsd -d nats:latest
@@ -132,11 +132,15 @@ output:
 
 ### Publish-Subscribe 
 
+You can subscribe to events published over the [Slack RTM api](https://api.slack.com/rtm).
+Events will be published to the NATS subject `slack.event.<event_name>` where `event_name` matches the name published [here](https://api.slack.com/events)
+For example all messages sent in channels where the slacks-nats user has joined will be published to `slack.event.message`.
+
+The following slack events are currently published to nats: 
+
 #### slack.event.message
 
-Subscribe to this to receive all messages from all channels where the slacks-nats user has joined. Uses the slack [RTM](https://api.slack.com/rtm) api 
-and listens for [message events](https://api.slack.com/events/message).
-For the exact response see [event.go](pkg/event/event.go).
+Subscribe to this to receive all messages from all channels where the slacks-nats user has joined. Response is the slack [message event](https://api.slack.com/events/message).
     
 e.g. (node)
 
@@ -161,4 +165,5 @@ output:
   ...
 ```
 
-
+# Legal
+This project is available under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.html).

@@ -94,7 +94,6 @@ func (n *natsPubMock) Publish(subject string, v interface{}) error {
 	return args.Error(0)
 }
 
-
 type slackMessageMock struct {
 	mock.Mock
 }

@@ -1,6 +1,7 @@
 package event
 
 import (
+	"fmt"
 	"github.com/natsflow/slack-nats/pkg/nats"
 	"github.com/nlopes/slack"
 )
@@ -10,7 +11,8 @@ func Handler(n nats.Publisher, sc *slack.RTM) {
 	for ev := range sc.IncomingEvents {
 		switch ev := ev.Data.(type) {
 		case *slack.MessageEvent:
-			nats.Publish(n, "slack.event.message", ev)
+			// e.g. slack.event.message
+			nats.Publish(n, fmt.Sprintf("slack.event.%s", ev.Type), ev)
 		}
 	}
 }

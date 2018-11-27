@@ -1,11 +1,11 @@
 package main
 
 import (
+	nt "github.com/nats-io/go-nats"
 	"github.com/natsflow/slack-nats/pkg/channel"
 	"github.com/natsflow/slack-nats/pkg/chat"
 	"github.com/natsflow/slack-nats/pkg/event"
 	"github.com/natsflow/slack-nats/pkg/nats"
-	nt "github.com/nats-io/go-nats"
 	"github.com/nlopes/slack"
 	"os"
 )
@@ -27,6 +27,4 @@ func main() {
 	go channel.LeaveHandler(n, s)
 
 	select {}
-	// TODO need to save channels joined in case this gets restarted - it should rejoin all of them
-	// how does this work if multiple instances of this app? config map, volume?
 }
