@@ -44,10 +44,11 @@ Join the specified slack channel.
 Uses the slack [channels.join](https://api.slack.com/methods/channels.join) api.
 For the exact requests & responses supported see [channel.go](pkg/channel/channel.go).
 Provide channel id OR name.
-    
-e.g. (node)
 
-```javascript
+<details>
+ <summary>e.g. (node)</summary>
+
+```js
 nats.requestOne('slack.channel.join', {name: 'my-slack-channel'}, {}, 3000, resp => {
     console.log(resp)
 })
@@ -89,16 +90,18 @@ output:
   err: '' }
 ```
 
+</details>
 
 #### slack.channel.leave
 
 Leave the specified slack channel. 
 Uses the slack [channels.leave](https://api.slack.com/methods/channels.leave) api.
 For the exact requests & responses see [channel.go](pkg/channel/channel.go).
-    
-e.g. (node)
 
-```javascript
+<details>
+ <summary>e.g. (node)</summary>
+
+```js
 nats.requestOne('slack.channel.leave', {id: 'CDNPXK2KT'}, {}, 3000, resp => {
     console.log(resp)
 })
@@ -110,15 +113,18 @@ output:
 { not_in_channel: false, err: '' }
 ```
 
+</details>    
+
 #### slack.chat.postMessage
 
 Post a message.
 Uses the slack [chat.postMessage](https://api.slack.com/methods/chat.postMessage) api.
 For the exact requests & responses see [chat.go](pkg/chat/chat.go).
-    
-e.g. (node)
 
-```javascript
+<details>
+ <summary>e.g. (node)</summary>
+
+```js
 nats.requestOne('slack.chat.postMessage', { text: 'Hello there', channel: 'CDNPXK2KT' }, {}, 3000, resp => {
     console.log(resp)
 })
@@ -130,6 +136,8 @@ output:
 { channel: 'CDNPXK2KT', ts: '1541506301.003000', err: '' }
 ```
 
+</details> 
+   
 ### Publish-Subscribe 
 
 You can subscribe to events published over the [Slack RTM api](https://api.slack.com/rtm).
@@ -142,9 +150,11 @@ The following slack events are currently published to nats:
 
 Subscribe to this to receive all messages from all channels where the slacks-nats user has joined. Response is the slack [message event](https://api.slack.com/events/message).
     
-e.g. (node)
 
-```javascript
+<details>
+ <summary>e.g. (node)</summary>
+
+```js
 nats.subscribe('slack.event.message', resp => {
     console.log(resp)
 })
@@ -164,6 +174,8 @@ output:
   delete_original: false }
   ...
 ```
+
+</details> 
 
 # Legal
 This project is available under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.html).
