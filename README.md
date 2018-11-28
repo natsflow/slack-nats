@@ -38,6 +38,8 @@ The message bodies for requests & responses follow the corresponding slack api m
 
 ### Request-Reply
 
+All message responses are json and will include a non-empty `err` string field in the case of an error.
+
 #### slack.channel.join
 
 Join the specified slack channel.
