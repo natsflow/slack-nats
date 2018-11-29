@@ -28,7 +28,7 @@ type PubSub interface {
 func NewConnection(url string) *nats.EncodedConn {
 	nc, err := nats.Connect(url)
 	if err != nil {
-		logger.Fatalf("Failed to connect to nats: %v", err)
+		logger.Fatalf("Failed to connect to nats on %q: %v", url, err)
 	}
 	logger.Infof("Connected to nats %s", url)
 

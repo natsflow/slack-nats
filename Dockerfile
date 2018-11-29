@@ -13,5 +13,6 @@ RUN CGO_ENABLED=0 go install
 
 # Run image
 FROM alpine:latest
+RUN apk add --no-cache ca-certificates
 COPY --from=builder /go/bin/slack-nats .
 ENTRYPOINT "/slack-nats"
