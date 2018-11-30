@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: slack-nats
-        image: slack-nats
+        image: natsflow/slack-nats
         env:
         - name: "NATS_URL"
           value: "nats://nats-cluster:4222"
