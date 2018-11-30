@@ -1,5 +1,7 @@
 # Slack Nats
 
+[![Build Status](https://travis-ci.org/natsflow/slack-nats.svg?branch=master)](https://travis-ci.org/natsflow/slack-nats)
+
 Interact with slack over NATS
 
 ## Quick start
