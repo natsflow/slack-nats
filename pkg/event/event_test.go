@@ -17,7 +17,7 @@ func TestHandlerShouldPublishIncomingMessages(t *testing.T) {
 		},
 	}
 	ev := slack.RTMEvent{
-		Type: "chat",
+		Type: "message",
 		Data: msgEvent,
 	}
 	n := natsPubStub{}
