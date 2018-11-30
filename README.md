@@ -2,7 +2,6 @@
 
 Interact with slack over NATS
 
-
 ## Quick start
 
 Run NATS:
@@ -30,16 +29,19 @@ PUB slack.channel.join INBOX.1 26
 {"name": "hcom-nats-test"}
 ```
 
-Here we use a node nats script to post a message:
-
-```js
-let NATS = require('nats')
-let nats = NATS.connect({ 'json': true })
-nats.requestOne('slack.chat.postMessage', {text: 'Hello there', channel: 'CDNPXK2KT'}, {}, 3000, resp => {})
-```
-
 By default slack-nats will connect to nats running on `nats://localhost:4222` - to change this set the `NATS_URL`
 env variable.
+
+## Quick start (kube)
+
+Run NATS using e.g. [NATS Operator](https://github.com/nats-io/nats-operator) 
+(this example assumes a NATS cluster running behind a service `nats-cluster`)
+
+Run slack-nats in the cluster (you must add your slack token to [deployment.yaml](deployments/deployment.yaml)):
+
+```
+skaffold dev
+```
 
 ## Nats Subjects
 
