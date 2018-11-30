@@ -14,9 +14,11 @@ docker run -p 4222:4222 -p 8222:8222 -p 6222:6222 --name gnatsd -d nats:latest
 Run slack-nats (you must provide the token of a valid slack user):
 
 ```
-dep ensure && \
-go build && \
-SLACK_TOKEN=<slack_token> ./slack-nats
+docker run \
+-e SLACK_TOKEN=xoxp-YOUR_SLACK_TOKEN \
+-e NATS_URL=nats://host.docker.internal:4222 \
+-d --name slack-nats \
+natsflow/slack-nats:0.0.1
 ```
 
 Interact with slack over nats. 
@@ -26,6 +28,14 @@ Here we get the user we are running slack-nats with to join a slack channel:
 telnet localhost 4222
 PUB slack.channel.join INBOX.1 26
 {"name": "hcom-nats-test"}
+```
+
+Here we use a node nats script to post a message:
+
+```js
+let NATS = require('nats')
+let nats = NATS.connect({ 'json': true })
+nats.requestOne('slack.chat.postMessage', {text: 'Hello there', channel: 'CDNPXK2KT'}, {}, 3000, resp => {})
 ```
 
 By default slack-nats will connect to nats running on `nats://localhost:4222` - to change this set the `NATS_URL`
