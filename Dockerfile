@@ -9,6 +9,7 @@ WORKDIR $GOPATH/src/github.com/natsflow/slack-nats
 COPY . ./
 
 RUN dep ensure -vendor-only
+RUN go test ./...
 RUN CGO_ENABLED=0 go install
 
 # Run image

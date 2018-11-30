@@ -1,9 +1,14 @@
-apiVersion: skaffold/v1alpha5
+apiVersion: skaffold/v1beta1
 kind: Config
 build:
   artifacts:
-  - image: slack-nats
+  - image: natsflow/slack-nats
 deploy:
   kubectl:
     manifests:
     - deployments/deployment.yaml
+profiles:
+- name: travis-ci
+  build:
+    local:
+      push: false
