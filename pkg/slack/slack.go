@@ -19,7 +19,12 @@ func init() {
 	logger = l.Sugar()
 }
 
-func Client(token string) *slack.RTM {
+func EventStream(n *nats.EncodedConn, slackToken string) {
+	s := newRtmClient(slackToken)
+	eventHandler(n, s)
+}
+
+func newRtmClient(token string) *slack.RTM {
 	s := slack.New(token).NewRTM()
 	if _, err := s.AuthTest(); err != nil {
 		logger.Fatalf("failed to authenticate with slack: %v", err)
@@ -28,26 +33,9 @@ func Client(token string) *slack.RTM {
 	return s
 }
 
-
-func NewSlack() {
-
-}
-
-type Slack struct {
-
-}
-
-
-
-//type NatsPublisher interface {
-//	Publish(subject string, v interface{}) error
-//}
-
 // TODO publish other data types as well?
-func EventStream(n *nats.EncodedConn, slackToken string) {
-	s := Client(slackToken)
-
-	for ev := range s.IncomingEvents {
+func eventHandler(n NatsPublisher, sc *slack.RTM) {
+	for ev := range sc.IncomingEvents {
 		switch d := ev.Data.(type) {
 		case *slack.MessageEvent:
 			// e.g. slack.event.message
@@ -59,62 +47,64 @@ func EventStream(n *nats.EncodedConn, slackToken string) {
 	}
 }
 
+type NatsPublisher interface {
+	Publish(subject string, v interface{}) error
+}
+
 func ReqHandler(n *nats.Conn, slackToken string) {
-	subj := "slack.>"
-	c := &http.Client{
-		Timeout: 10 * time.Second,
-	}
-	if _, err := n.Subscribe(subj, func(m *nats.Msg) {
-		logger.Infof("got subject=%s with reply %s", m.Subject, m.Reply)
-
+	c := newSlack(slackToken)
+	if _, err := n.Subscribe("slack.>", func(m *nats.Msg) {
 		if strings.HasPrefix(m.Subject, "slack.event.") {
-			return // these are events we've raised & aren't requests
+			return // these are events we've raised & aren't requests, so dump them
 		}
-
-		respMsg := reqHandler(c, slackToken, m.Subject, m.Data)
+		respMsg := c.Do(toPath(m.Subject), m.Data)
 		if err := n.Publish(m.Reply, respMsg); err != nil {
 			logger.Errorf("could not publish to nats subject=%s reply=%s: %v", m.Subject, m.Reply, err)
 		}
 	}); err != nil {
-		logger.Fatalf("failed to subscribe to %q: %v", subj, err)
+		logger.Fatalf("failed to subscribe to 'slack.>': %v", err)
 	}
 }
 
+// e.g `slack.channels.leave` -> `channels.leave`
+func toPath(subj string) string {
+	return strings.TrimPrefix(subj, "slack.")
+}
 
-func reqHandler(c *http.Client, slackToken string, subj string, reqMsg []byte) []byte {
-	u := subjectToUrl(subj)
+type Slack struct {
+	client *http.Client
+	token  string
+}
 
-	req, err := http.NewRequest(http.MethodPost, u, bytes.NewReader(reqMsg))
+func newSlack(token string) Slack {
+	return Slack{
+		client: &http.Client{
+			Timeout: 10 * time.Second,
+		},
+		token: token,
+	}
+}
+
+func (s Slack) Do(path string, body []byte) []byte {
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("https://slack.com/api/%s", path), bytes.NewReader(body))
 	if err != nil {
 		return errorResp(err)
 	}
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", slackToken))
-	// TODO set on request context?
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+	// TODO set timeout on request context?
 	//req.WithContext()
 
-	resp, err := c.Do(req)
+	resp, err := s.client.Do(req)
 	if err != nil {
 		return errorResp(err)
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return errorResp(err)
 	}
-	return body
-}
-
-
-
-//func testConnection() {
-//
-//}
-
-// converts e.g `slack.channels.leave` to `https://slack.com/api/channels.leave`
-func subjectToUrl(subj string) string {
-	path := strings.TrimPrefix(subj, "slack.")
-	return fmt.Sprintf("https://slack.com/api/%s", path)
+	return respBody
 }
 
 func errorResp(err error) []byte {
