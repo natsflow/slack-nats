@@ -1,12 +1,8 @@
 package main
 
 import (
-	nt "github.com/nats-io/go-nats"
-	"github.com/natsflow/slack-nats/pkg/channel"
-	"github.com/natsflow/slack-nats/pkg/chat"
-	"github.com/natsflow/slack-nats/pkg/event"
-	"github.com/natsflow/slack-nats/pkg/nats"
-	"github.com/nlopes/slack"
+	"github.com/nats-io/go-nats"
+	"github.com/natsflow/slack-nats/pkg/slack"
 	"go.uber.org/zap"
 	"os"
 )
@@ -19,23 +15,31 @@ func init() {
 }
 
 func main() {
+	slackToken := os.Getenv("SLACK_TOKEN")
+
 	natsURL, ok := os.LookupEnv("NATS_URL")
 	if !ok {
-		natsURL = nt.DefaultURL
+		natsURL = nats.DefaultURL
 	}
-	n := nats.NewConnection(natsURL)
+	n := newNatsConn(natsURL)
 	defer n.Close()
 
-	s := slack.New(os.Getenv("SLACK_TOKEN")).NewRTM()
-	if _, err := s.AuthTest(); err != nil {
-		logger.Fatalf("failed to authenticate with slack: %v", err)
-	}
-	go s.ManageConnection()
-
-	go chat.PostMessageHandler(n, s)
-	go event.Handler(n, s)
-	go channel.JoinHandler(n, s)
-	go channel.LeaveHandler(n, s)
+	go slack.EventStream(n, slackToken)
+	go slack.ReqHandler(n.Conn, slackToken)
 
 	select {}
+}
+
+func newNatsConn(url string) *nats.EncodedConn {
+	nc, err := nats.Connect(url)
+	if err != nil {
+		logger.Fatalf("Failed to connect to nats on %q: %v", url, err)
+	}
+	logger.Infof("Connected to nats %s", url)
+
+	ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
+	if err != nil {
+		logger.Fatalf("Failed to create nats json connection: %v", err)
+	}
+	return ec
 }

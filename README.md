@@ -48,21 +48,24 @@ skaffold dev
 ## Nats Subjects
 
 The following nats subjects are currently supported.
-The message bodies for requests & responses follow the corresponding slack api message bodies as closely as possible.
 
 ### Request-Reply
 
-All message responses are json and will include a non-empty `err` string field in the case of an error.
+slack-nats supports **all** json slack api methods - these are listed [here](https://api.slack.com/web#methods_supporting_json).
 
-#### slack.channel.join
+The slack-nats subject is the slack api method prefixed by `slack.` - so for example the slack method [chat.postMessage](https://api.slack.com/methods/chat.postMessage)
+is accessed using the nats subject `slack.chat.postMessage`.
 
-Join the specified slack channel.
-Uses the slack [channels.join](https://api.slack.com/methods/channels.join) api.
-For the exact requests & responses supported see [channel.go](pkg/channel/channel.go).
-Provide channel id OR name.
+The request and response bodies match the slack api requests and responses exactly, so please refer to the [slack api](https://api.slack.com/methods) for documentation.
+
+Unexpected errors, such as timeouts or unparsable responses will be returned in the format `{"error" : "some error message..."}`
+
+Below are some examples using [node-nats](https://github.com/nats-io/node-nats): 
 
 <details>
- <summary>e.g. (node)</summary>
+ <summary>e.g. join channel</summary>
+ 
+Uses the slack [channels.join](https://api.slack.com/methods/channels.join) api.
 
 ```js
 nats.requestOne('slack.channel.join', {name: 'my-slack-channel'}, {}, 3000, resp => {
@@ -90,7 +93,7 @@ output:
      num_members: 0,
      priority: 0,
      user: '',
-     name: 'hcom-nats-test',
+     name: 'my-slack-channel',
      creator: 'U6WDH7CCC',
      is_archived: false,
      members: [ 'U6WDH7CCC', 'U7KMBRAVB' ],
@@ -108,14 +111,10 @@ output:
 
 </details>
 
-#### slack.channel.leave
-
-Leave the specified slack channel. 
-Uses the slack [channels.leave](https://api.slack.com/methods/channels.leave) api.
-For the exact requests & responses see [channel.go](pkg/channel/channel.go).
-
 <details>
- <summary>e.g. (node)</summary>
+ <summary>e.g. leave channel</summary>
+
+Uses the slack [channels.leave](https://api.slack.com/methods/channels.leave) api.
 
 ```js
 nats.requestOne('slack.channel.leave', {id: 'CDNPXK2KT'}, {}, 3000, resp => {
@@ -131,14 +130,10 @@ output:
 
 </details>    
 
-#### slack.chat.postMessage
-
-Post a message.
-Uses the slack [chat.postMessage](https://api.slack.com/methods/chat.postMessage) api.
-For the exact requests & responses see [chat.go](pkg/chat/chat.go).
-
 <details>
- <summary>e.g. (node)</summary>
+ <summary>e.g. post a message</summary>
+
+Uses the slack [chat.postMessage](https://api.slack.com/methods/chat.postMessage) api.
 
 ```js
 nats.requestOne('slack.chat.postMessage', { text: 'Hello there', channel: 'CDNPXK2KT' }, {}, 3000, resp => {
