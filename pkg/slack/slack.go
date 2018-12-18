@@ -72,8 +72,13 @@ func toPath(subj string) string {
 }
 
 type Slack struct {
-	client *http.Client
+	client HttpDoer
 	token  string
+	url    string
+}
+
+type HttpDoer interface {
+	Do(*http.Request) (*http.Response, error)
 }
 
 func newSlack(token string) Slack {
@@ -82,11 +87,12 @@ func newSlack(token string) Slack {
 			Timeout: 10 * time.Second,
 		},
 		token: token,
+		url:   "https://slack.com/api/",
 	}
 }
 
 func (s Slack) Do(path string, body []byte) []byte {
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("https://slack.com/api/%s", path), bytes.NewReader(body))
+	req, err := http.NewRequest(http.MethodPost, s.url+path, bytes.NewReader(body))
 	if err != nil {
 		return errorResp(err)
 	}
