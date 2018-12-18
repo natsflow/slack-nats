@@ -60,7 +60,7 @@ The request and response bodies match the slack api requests and responses exact
 
 Unexpected errors, such as timeouts or unparsable responses will be returned in the format `{"error" : "some error message..."}`
 
-Below are some examples using [node](https://github.com/nats-io/node-nats): 
+Below are some examples using [node-nats](https://github.com/nats-io/node-nats): 
 
 <details>
  <summary>e.g. join channel</summary>
@@ -93,7 +93,7 @@ output:
      num_members: 0,
      priority: 0,
      user: '',
-     name: 'hcom-nats-test',
+     name: 'my-slack-channel',
      creator: 'U6WDH7CCC',
      is_archived: false,
      members: [ 'U6WDH7CCC', 'U7KMBRAVB' ],
