@@ -11,4 +11,11 @@ install:
 
 script:
 - env
-- skaffold build --profile travis-ci
+- |
+  if [ "${TRAVIS_TAG}" = "" ]; then
+    echo "no tag"
+    skaffold build --profile travis-ci
+  else
+    echo "tagged"
+    skaffold build --profile travis-release
+  fi
