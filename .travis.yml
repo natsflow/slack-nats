@@ -9,6 +9,7 @@ install:
 - chmod +x skaffold
 - sudo mv skaffold /usr/local/bin
 
+# if commit is tagged, then tag docker image with the tag & push image (otherwise tag with commit id & no push)
 script:
 - |
   if [ "${TRAVIS_TAG}" = "" ]; then
