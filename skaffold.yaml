@@ -12,3 +12,11 @@ profiles:
   build:
     local:
       push: false
+- name: travis-release
+  build:
+    tagPolicy:
+      envTemplate:
+        template: "{{.IMAGE_NAME}}:{{.TRAVIS_TAG}}"
+    local:
+      # TODO: should actually push this
+      push: false
