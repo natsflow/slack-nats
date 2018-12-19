@@ -10,4 +10,5 @@ install:
 - sudo mv skaffold /usr/local/bin
 
 script:
+- env
 - skaffold build --profile travis-ci
