@@ -10,7 +10,6 @@ install:
 - sudo mv skaffold /usr/local/bin
 
 script:
-- env
 - |
   if [ "${TRAVIS_TAG}" = "" ]; then
     echo "no tag"
