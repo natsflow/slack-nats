@@ -9,6 +9,9 @@ install:
 - chmod +x skaffold
 - sudo mv skaffold /usr/local/bin
 
+before_script:
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
 # if commit is tagged, then tag docker image with the tag & push image (otherwise tag with commit id & no push)
 script:
 - |

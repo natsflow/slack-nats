@@ -17,6 +17,3 @@ profiles:
     tagPolicy:
       envTemplate:
         template: "{{.IMAGE_NAME}}:{{.TRAVIS_TAG}}"
-    local:
-      # TODO: should actually push this
-      push: false
