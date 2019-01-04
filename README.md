@@ -19,7 +19,7 @@ docker run \
 -e SLACK_TOKEN=xoxp-YOUR_SLACK_TOKEN \
 -e NATS_URL=nats://host.docker.internal:4222 \
 -d --name slack-nats \
-natsflow/slack-nats:0.2.0
+natsflow/slack-nats:0.3.0
 ```
 
 Interact with slack over nats. 
