@@ -136,8 +136,8 @@ output:
 Uses the slack [chat.postMessage](https://api.slack.com/methods/chat.postMessage) api.
 
 ```js
-nats.requestOne('slack.chat.postMessage', { text: 'Hello there', channel: 'CDNPXK2KT' }, {}, 3000, resp => {
-    console.log(resp)
+nats.requestOne('slack.chat.postMessage', { text: 'Hello there', channel: 'CDNPXK2KT', as_user: true }, {}, 3000, resp => {
+  console.log(resp)
 })
 ```
 
