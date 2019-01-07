@@ -1,4 +1,4 @@
-apiVersion: skaffold/v1beta1
+apiVersion: skaffold/v1beta2
 kind: Config
 build:
   artifacts:
@@ -16,4 +16,4 @@ profiles:
   build:
     tagPolicy:
       envTemplate:
-        template: "{{.IMAGE_NAME}}:{{.TRAVIS_TAG}}"
+        template: '{{.IMAGE_NAME}}:{{.TRAVIS_TAG}}'
