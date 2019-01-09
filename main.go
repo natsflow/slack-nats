@@ -3,16 +3,9 @@ package main
 import (
 	"github.com/nats-io/go-nats"
 	"github.com/natsflow/slack-nats/pkg/slack"
-	"go.uber.org/zap"
+	"github.com/rs/zerolog/log"
 	"os"
 )
-
-var logger *zap.SugaredLogger
-
-func init() {
-	l, _ := zap.NewProduction()
-	logger = l.Sugar()
-}
 
 func main() {
 	slackToken := os.Getenv("SLACK_TOKEN")
@@ -33,13 +26,16 @@ func main() {
 func newNatsConn(url string) *nats.EncodedConn {
 	nc, err := nats.Connect(url)
 	if err != nil {
-		logger.Fatalf("Failed to connect to nats on %q: %v", url, err)
+		log.Fatal().
+			Err(err).
+			Str("url", url).
+			Msg("Failed to connect to nats")
 	}
-	logger.Infof("Connected to nats %s", url)
+	log.Info().Str("url", url).Msg("Connected to nats")
 
 	ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
 	if err != nil {
-		logger.Fatalf("Failed to create nats json connection: %v", err)
+		log.Fatal().Err(err).Msg("Failed to create nats json connection")
 	}
 	return ec
 }

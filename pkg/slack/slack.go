@@ -5,19 +5,12 @@ import (
 	"fmt"
 	"github.com/nats-io/go-nats"
 	"github.com/nlopes/slack"
-	"go.uber.org/zap"
+	"github.com/rs/zerolog/log"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
 )
-
-var logger *zap.SugaredLogger
-
-func init() {
-	l, _ := zap.NewProduction()
-	logger = l.Sugar()
-}
 
 func EventStream(n *nats.EncodedConn, slackToken string) {
 	eventHandler(n, newRtmClient(slackToken))
@@ -26,7 +19,7 @@ func EventStream(n *nats.EncodedConn, slackToken string) {
 func newRtmClient(token string) *slack.RTM {
 	s := slack.New(token).NewRTM()
 	if _, err := s.AuthTest(); err != nil {
-		logger.Fatalf("failed to authenticate with slack: %v", err)
+		log.Fatal().Err(err).Msg("failed to authenticate with slack")
 	}
 	go s.ManageConnection()
 	return s
@@ -40,7 +33,7 @@ func eventHandler(n NatsPublisher, sc *slack.RTM) {
 			// e.g. slack.event.message
 			subject := fmt.Sprintf("slack.event.%s", ev.Type)
 			if err := n.Publish(subject, d); err != nil {
-				logger.Errorf("could not publish to nats subject=%s: %v", subject, err)
+				log.Error().Err(err).Str("subject", subject).Msg("could not publish to NATS")
 			}
 		}
 	}
@@ -58,10 +51,14 @@ func ReqHandler(n *nats.Conn, slackToken string) {
 		}
 		respMsg := c.Do(toPath(m.Subject), m.Data)
 		if err := n.Publish(m.Reply, respMsg); err != nil {
-			logger.Errorf("could not publish to nats subject=%s reply=%s: %v", m.Subject, m.Reply, err)
+			log.Error().
+				Err(err).
+				Str("subject", m.Subject).
+				Str("reply", m.Reply).
+				Msg("could not publish to NATS")
 		}
 	}); err != nil {
-		logger.Fatalf("failed to subscribe to 'slack.>': %v", err)
+		log.Fatal().Err(err).Str("subject", "slack.>").Msg("could not subscribe to NATS")
 	}
 }
 
