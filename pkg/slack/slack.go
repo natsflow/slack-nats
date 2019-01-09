@@ -20,8 +20,7 @@ func init() {
 }
 
 func EventStream(n *nats.EncodedConn, slackToken string) {
-	s := newRtmClient(slackToken)
-	eventHandler(n, s)
+	eventHandler(n, newRtmClient(slackToken))
 }
 
 func newRtmClient(token string) *slack.RTM {
