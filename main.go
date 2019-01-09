@@ -29,13 +29,13 @@ func newNatsConn(url string) *nats.EncodedConn {
 		log.Fatal().
 			Err(err).
 			Str("url", url).
-			Msg("Failed to connect to nats")
+			Msg("Failed to connect to NATS")
 	}
-	log.Info().Str("url", url).Msg("Connected to nats")
+	log.Info().Str("url", url).Msg("Connected to NATS")
 
 	ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to create nats json connection")
+		log.Fatal().Err(err).Msg("Failed to create NATS json connection")
 	}
 	return ec
 }
