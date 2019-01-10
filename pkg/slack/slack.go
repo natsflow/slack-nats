@@ -45,7 +45,7 @@ type NatsPublisher interface {
 
 func ReqHandler(n *nats.Conn, slackToken string) {
 	c := newSlack(slackToken)
-	if _, err := n.Subscribe("slack.>", func(m *nats.Msg) {
+	if _, err := n.QueueSubscribe("slack.>", "slack-nats", func(m *nats.Msg) {
 		if strings.HasPrefix(m.Subject, "slack.event.") {
 			return // these are events we've raised & aren't requests, so dump them
 		}
