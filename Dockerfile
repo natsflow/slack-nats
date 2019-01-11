@@ -3,9 +3,8 @@ FROM golang:1.11 AS builder
 
 WORKDIR /slack-nats
 COPY . ./
-RUN go mod download
-RUN go test ./...
-RUN CGO_ENABLED=0 go build
+RUN go test -mod=readonly ./...
+RUN CGO_ENABLED=0 go build -mod=readonly
 
 # Run image
 FROM alpine:latest
