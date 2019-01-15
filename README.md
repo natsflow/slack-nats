@@ -68,7 +68,7 @@ Below are some examples using [node-nats](https://github.com/nats-io/node-nats):
 Uses the slack [channels.join](https://api.slack.com/methods/channels.join) api.
 
 ```js
-nats.requestOne('slack.channel.join', {name: 'my-slack-channel'}, {}, 3000, resp => {
+nats.requestOne('slack.channels.join', {name: 'my-slack-channel'}, {}, 3000, resp => {
     console.log(resp)
 })
 ```
@@ -117,7 +117,7 @@ output:
 Uses the slack [channels.leave](https://api.slack.com/methods/channels.leave) api.
 
 ```js
-nats.requestOne('slack.channel.leave', {id: 'CDNPXK2KT'}, {}, 3000, resp => {
+nats.requestOne('slack.channels.leave', {id: 'CDNPXK2KT'}, {}, 3000, resp => {
     console.log(resp)
 })
 ```
