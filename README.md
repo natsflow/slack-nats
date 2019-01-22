@@ -27,7 +27,7 @@ Here we get the user we are running slack-nats with to join a slack channel:
 
 ```
 telnet localhost 4222
-PUB slack.channel.join INBOX.1 26
+PUB slack.channels.join INBOX.1 26
 {"name": "hcom-nats-test"}
 ```
 
