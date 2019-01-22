@@ -39,7 +39,14 @@ env variable.
 Run NATS using e.g. [NATS Operator](https://github.com/nats-io/nats-operator) 
 (this example assumes a NATS cluster running behind a service `nats-cluster`)
 
-Run slack-nats in the cluster (you must add your slack token to [deployment.yaml](deployments/deployment.yaml)):
+Add your slack token to [slack-secret.yaml](deployments/slack-secret.yaml) under the `slacktoken` key.
+The token must be base64 encoded (see the [kube docs](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) for more details):
+
+```
+echo -n 'xoxb-YOUR_SLACK_TOKEN' | base64
+```
+
+Run slack-nats in the cluster:
 
 ```
 skaffold dev

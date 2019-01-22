@@ -21,4 +21,7 @@ spec:
         - name: "NATS_URL"
           value: "nats://nats-cluster:4222"
         - name: "SLACK_TOKEN"
-          value: "xoxp-YOUR_SLACK_TOKEN"
+          valueFrom:
+            secretKeyRef:
+              name: slacksecret
+              key: slacktoken
