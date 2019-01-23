@@ -12,7 +12,7 @@ Run NATS:
 docker run -p 4222:4222 -p 8222:8222 -p 6222:6222 --name gnatsd -d nats:latest
 ```
 
-Run slack-nats (you must provide the token of a valid slack user):
+Run slack-nats (you must provide the token of a valid slack user or bot):
 
 ```
 docker run \
@@ -23,12 +23,12 @@ natsflow/slack-nats:0.5.0
 ```
 
 Interact with slack over nats. 
-Here we get the user we are running slack-nats with to join a slack channel:
+Here we get the user/bot we are running slack-nats with to post to a slack channel (the user/bot must be a member of the channel):
 
 ```
 telnet localhost 4222
-PUB slack.channels.join INBOX.1 26
-{"name": "hcom-nats-test"}
+PUB slack.chat.postMessage INBOX.1 69
+{'text':'Hello there everyone!','channel':'CDNPXK2KT','as_user':true}
 ```
 
 By default slack-nats will connect to nats running on `nats://localhost:4222` - to change this set the `NATS_URL`
@@ -58,7 +58,7 @@ The following nats subjects are currently supported.
 
 ### Request-Reply
 
-slack-nats supports **all** json slack api methods - these are listed [here](https://api.slack.com/web#methods_supporting_json).
+slack-nats supports **all** json slack api methods - these are listed [here](https://api.slack.com/web#methods_supporting_json). Note that the user/bot you are runnning slack-nats with may not have the necessary permissions to perform all the avilable slack methods - for example `bot` users cannot use the channels.join method.
 
 The slack-nats subject is the slack api method prefixed by `slack.` - so for example the slack method [chat.postMessage](https://api.slack.com/methods/chat.postMessage)
 is accessed using the nats subject `slack.chat.postMessage`.
