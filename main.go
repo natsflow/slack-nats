@@ -5,6 +5,7 @@ import (
 	"github.com/natsflow/slack-nats/pkg/slack"
 	"github.com/rs/zerolog/log"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -17,7 +18,10 @@ func main() {
 	n := newNatsConn(natsURL)
 	defer n.Close()
 
-	go slack.EventStream(n, slackToken)
+	pubEvents, _ := strconv.ParseBool(os.Getenv("PUBLISH_EVENTS"))
+	if pubEvents {
+		go slack.EventStream(n, slackToken)
+	}
 	go slack.ReqHandler(n.Conn, slackToken)
 
 	select {}

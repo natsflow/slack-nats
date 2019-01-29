@@ -5,7 +5,7 @@ metadata:
   labels:
     app: slack-nats
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: slack-nats
@@ -25,3 +25,33 @@ spec:
             secretKeyRef:
               name: slacksecret
               key: slacktoken
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slack-nats-events
+  labels:
+    app: slack-nats-events
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slack-nats-events
+  template:
+    metadata:
+      labels:
+        app: slack-nats-events
+    spec:
+      containers:
+        - name: slack-nats
+          image: natsflow/slack-nats
+          env:
+            - name: "NATS_URL"
+              value: "nats://nats-cluster:4222"
+            - name: "PUBLISH_EVENTS"
+              value: "true"
+            - name: "SLACK_TOKEN"
+              valueFrom:
+                secretKeyRef:
+                  name: slacksecret
+                  key: slacktoken

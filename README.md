@@ -6,6 +6,26 @@ Interact with slack over NATS
 
 ## Quick start
 
+### kubernetes
+
+Run NATS using e.g. [NATS Operator](https://github.com/nats-io/nats-operator) 
+(this example assumes a NATS cluster running behind a service `nats-cluster`)
+
+Add your slack token to [slack-secret.yaml](deployments/slack-secret.yaml) under the `slacktoken` key.
+The token must be base64 encoded (see the [kube docs](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) for more details):
+
+```
+echo -n 'xoxb-YOUR_SLACK_TOKEN' | base64
+```
+
+Run slack-nats in the cluster:
+
+```
+skaffold dev
+```
+
+### Docker
+
 Run NATS:
 
 ```
@@ -31,26 +51,17 @@ PUB slack.channel.join INBOX.1 26
 {"name": "hcom-nats-test"}
 ```
 
-By default slack-nats will connect to nats running on `nats://localhost:4222` - to change this set the `NATS_URL`
-env variable.
+### Env Variables
 
-## Quick start (kube)
+key            | default value           | description
+-------------- | ----------------------- | -----------
+SLACK_TOKEN    | n/a                     | A valid slack bot or user token that slack-nats will use to connect to the slack api.
+NATS_URL       | "nats://localhost:4222" | URL of the NATS server to connect to
+PUBLISH_EVENTS | "false"                 | Whether slack-nats should publish slack events to NATS.  
 
-Run NATS using e.g. [NATS Operator](https://github.com/nats-io/nats-operator) 
-(this example assumes a NATS cluster running behind a service `nats-cluster`)
-
-Add your slack token to [slack-secret.yaml](deployments/slack-secret.yaml) under the `slacktoken` key.
-The token must be base64 encoded (see the [kube docs](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) for more details):
-
-```
-echo -n 'xoxb-YOUR_SLACK_TOKEN' | base64
-```
-
-Run slack-nats in the cluster:
-
-```
-skaffold dev
-```
+If running multiple instances of slack-nats then you should set PUBLISH_EVENTS to "true" for at most one instance - this 
+is to prevent duplicate events being published to NATS for a single slack event. The request-reply behaviour of slack-nats
+uses [queue grouping](https://nats.io/documentation/concepts/nats-queueing/), hence natively handles running multiple instances.
 
 ## Nats Subjects
 
